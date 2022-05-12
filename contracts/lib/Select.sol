@@ -1,5 +1,5 @@
-pragma solidity ^0.4.24;
-import {SafeMath} from "openzeppelin-solidity/contracts/math/SafeMath.sol";
+pragma solidity ^0.8.13;
+import {SafeMath} from "_external/SafeMath.sol";
 
 /**
  * @title Select
@@ -14,7 +14,7 @@ library Select {
      * @param size Number of elements in array to compute the median for.
      * @return Median of array.
      */
-    function computeMedian(uint256[] array, uint256 size) internal pure returns (uint256) {
+    function computeMedian(uint256[] memory array, uint256 size) internal pure returns (uint256) {
         require(size > 0 && array.length >= size);
         for (uint256 i = 1; i < size; i++) {
             for (uint256 j = i; j > 0 && array[j - 1] > array[j]; j--) {

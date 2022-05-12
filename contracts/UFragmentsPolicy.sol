@@ -1,4 +1,4 @@
-pragma solidity 0.7.6;
+pragma solidity ^0.8.13;
 
 import "./_external/SafeMath.sol";
 import "./_external/Ownable.sol";
@@ -354,8 +354,8 @@ contract UFragmentsPolicy is Ownable {
     }
 
     /**
-    * To maintain abi backward compatibility
-    */
+     * To maintain abi backward compatibility
+     */
     function rebaseLag() public pure returns (uint256) {
         return 1;
     }

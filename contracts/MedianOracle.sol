@@ -1,7 +1,7 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.8.13;
 
-import {SafeMath} from "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import {Ownable} from "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import {SafeMath} from "_external/SafeMath.sol";
+import {Ownable} from "_external/Ownable.sol";
 
 import "./lib/Select.sol";
 
@@ -114,12 +114,12 @@ contract MedianOracle is Ownable, IOracle {
         uint8 index_past = 1 - index_recent;
 
         // Check that the push is not too soon after the last one.
-        require(timestamps[index_recent].add(reportDelaySec) <= now);
+        require(timestamps[index_recent].add(reportDelaySec) <= block.timestamp);
 
-        reports[index_past].timestamp = now;
+        reports[index_past].timestamp = block.timestamp;
         reports[index_past].payload = payload;
 
-        emit ProviderReportPushed(providerAddress, payload, now);
+        emit ProviderReportPushed(providerAddress, payload, block.timestamp);
     }
 
     /**
@@ -142,8 +142,8 @@ contract MedianOracle is Ownable, IOracle {
         uint256 reportsCount = providers.length;
         uint256[] memory validReports = new uint256[](reportsCount);
         uint256 size = 0;
-        uint256 minValidTimestamp = now.sub(reportExpirationTimeSec);
-        uint256 maxValidTimestamp = now.sub(reportDelaySec);
+        uint256 minValidTimestamp = block.timestamp.sub(reportExpirationTimeSec);
+        uint256 maxValidTimestamp = block.timestamp.sub(reportDelaySec);
 
         for (uint256 i = 0; i < reportsCount; i++) {
             address providerAddress = providers[i];
@@ -200,19 +200,20 @@ contract MedianOracle is Ownable, IOracle {
      * @notice Revokes provider authorization.
      * @param provider Address of the provider.
      */
-    function removeProvider(address provider) external onlyOwner {
-        delete providerReports[provider];
-        for (uint256 i = 0; i < providers.length; i++) {
-            if (providers[i] == provider) {
-                if (i + 1 != providers.length) {
-                    providers[i] = providers[providers.length - 1];
-                }
-                providers.length--;
-                emit ProviderRemoved(provider);
-                break;
-            }
-        }
-    }
+    // TODO: rewrite removeProvider such that it doesn't change providers.length
+    // function removeProvider(address provider) external onlyOwner {
+    //     delete providerReports[provider];
+    //     for (uint256 i = 0; i < providers.length; i++) {
+    //         if (providers[i] == provider) {
+    //             if (i + 1 != providers.length) {
+    //                 providers[i] = providers[providers.length - 1];
+    //             }
+    //             providers.length--;
+    //             emit ProviderRemoved(provider);
+    //             break;
+    //         }
+    //     }
+    // }
 
     /**
      * @return The number of authorized providers.
