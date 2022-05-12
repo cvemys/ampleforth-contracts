@@ -8,7 +8,7 @@ def Deploy(filename):
     with open(filename,'r') as f:
         src = f.read()
 
-    compiled_sol = compile_source(src,output_values=['abi','bin'])
+    compiled_sol = compile_source(src,output_values=['abi','bin'],base_path="../contracts/")
     contract_id, contract_interface = compiled_sol.popitem()
     bytecode = contract_interface['bin']
     abi = contract_interface['abi']
